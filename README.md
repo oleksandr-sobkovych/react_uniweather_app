@@ -1,3 +1,11 @@
+# Omicron Team
+
+Oleksa Hryniv, Oleksandr Sobkovych, Volodymyr Fedynyak
+
+# Incorporated API (TODO)
+
+NASA Insight, NASA SSD/CNEOS, Google Maps API, Open Weather Map, possibly Mars Climate Database
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
