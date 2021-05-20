@@ -12,9 +12,7 @@ import { HomeOutlined } from "@material-ui/icons";
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
-    margin: "0 0 1% 0",
-    position: "static",
-    top: 0,
+    marginBottom: "1vh",
   },
   button: {
     color: "#557A95",

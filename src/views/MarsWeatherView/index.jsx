@@ -1,5 +1,10 @@
-import Container from "react-bootstrap/Container";
+import React from "react";
+import Grid from "@material-ui/core/Grid";
 
-const MarsWeatherView = () => <Container fluid></Container>;
+const MarsWeatherView = () => (
+  <Grid container>
+    {/* TODO: Add a module that displays current weather on Mars and another for some historical data. */}
+  </Grid>
+);
 
 export default MarsWeatherView;

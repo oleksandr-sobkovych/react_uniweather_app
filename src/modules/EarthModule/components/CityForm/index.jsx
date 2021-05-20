@@ -1,71 +1,65 @@
-import React, { useEffect, useState } from "react";
-import {
-  Card,
-  TextField,
-  InputAdornment,
-  makeStyles,
-  Button,
-} from "@material-ui/core";
-import LocationCityOutlined from "@material-ui/icons/LocationCityOutlined";
-import { useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { Card, TextField, makeStyles, Button } from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const useStyles = makeStyles({
   root: {
     background: "linear-gradient(45deg, #329ea8 30%, #5526a6 90%)",
     padding: "1% 2%",
+    display: "flex",
+    justifyContent: "flex-end",
   },
-  input: {
-    color: "white",
+  button: {
+    marginLeft: "auto",
   },
-  field: {
-    margin: "0 0 0 1%",
+  autocomplete: {
+    minWidth: "30vh",
   },
 });
 
-const CityForm = () => {
+const CityForm = ({ acceptor: acceptorFunc }) => {
+  const [supportedCities, setSupportedCities] = useState([]);
   const [cityName, setCityName] = useState("");
   const classes = useStyles();
-  const history = useHistory();
-  let supportedCities;
   useEffect(() => {
-    // connect to API
-    supportedCities = ["Lviv", "London"];
-
-    return () => {
-      /* disconnect from API */
-    };
-  });
+    // API call
+    setSupportedCities(["Lviv", "London"]);
+  }, []);
 
   return (
     <Card>
       <form className={classes.root} noValidate autoComplete="off">
-        <TextField
-          className={classes.field}
+        <Autocomplete
+          className={classes.autocomplete}
           id="input-city"
-          label="Enter your city..."
-          color="secondary"
-          InputLabelProps={{
-            style: { color: "lightgrey" },
+          options={supportedCities}
+          onSelect={(e) => {
+            setCityName(e.target.value);
           }}
-          InputProps={{
-            className: classes.input,
-            startAdornment: (
-              <InputAdornment position="start">
-                <LocationCityOutlined />
-              </InputAdornment>
-            ),
-          }}
-          onChange={(e) => setCityName(e.target.value)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Enter your city..."
+              variant="outlined"
+              color="secondary"
+              InputLabelProps={{
+                style: { color: "lightgrey" },
+              }}
+            />
+          )}
         />
         <Button
+          className={classes.button}
           variant="contained"
           color="primary"
-          onClick={(e) => {
-            e.preventDefault();
-            if (supportedCities.includes(cityName)) {
-              history.push(`/earth-weather/${cityName}`);
-            }
+          onClick={() => {
+            acceptorFunc(cityName);
           }}
+          component={RouterLink}
+          to={`/earth-weather/${
+            supportedCities.includes(cityName) ? cityName : ""
+          }`}
         >
           Submit
         </Button>

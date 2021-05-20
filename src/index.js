@@ -11,9 +11,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import MarsWeatherView from "./views/MarsWeatherView";
 import CosmicWeatherView from "./views/CosmicWeatherView";
 import EarthWeatherView from "./views/EarthWeatherView";
-import CityView from "./views/CityView";
 import Navigation from "./modules/SharedModule/components/Navigation";
-import PrivateRoute from "./modules/SharedModule/PrivateRoute";
 import Footer from "./modules/SharedModule/components/Footer";
 import reportWebVitals from "./reportWebVitals";
 
@@ -22,19 +20,12 @@ ReactDOM.render(
     <Router>
       <Navigation />
       <Switch>
-        <Route exact path="/" render={() => <Redirect to="/earth-weather" />} />
         <Route exact path="/mars-weather" component={MarsWeatherView} />
         <Route exact path="/cosmic-weather" component={CosmicWeatherView} />
-        <Route exact path="/earth-weather" component={EarthWeatherView} />
-        <PrivateRoute
-          exact
-          path="/earth-weather/:cityName"
-          component={CityView}
-          propsPredicate={(props) => {
-            console.log(props);
-            return true;
-          }}
-        />
+        <Route path="/earth-weather">
+          <EarthWeatherView />
+        </Route>
+        <Route path="/" render={() => <Redirect to="/earth-weather" />} />
       </Switch>
       <Footer />
     </Router>

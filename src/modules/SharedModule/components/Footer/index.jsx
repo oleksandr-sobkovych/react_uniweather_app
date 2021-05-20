@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Link } from "react-router-dom";
 import {
   AppBar,
   makeStyles,
@@ -8,12 +8,11 @@ import {
   Typography,
 } from "@material-ui/core";
 import { GitHub, CopyrightOutlined } from "@material-ui/icons";
-import { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
-    margin: "1% 0 0 0",
+    marginTop: "1vh",
   },
   button: {
     color: "#2b6b6b",
@@ -42,9 +41,11 @@ const Footer = () => {
             className={classes.button}
             component={Link}
             target="_blank"
-            href="https://github.com/oleksandr-sobkovych/react_uniweather_app"
+            to={{
+              pathname:
+                "https://github.com/oleksandr-sobkovych/react_uniweather_app",
+            }}
           >
-            {/*won't work on localhost, of course*/}
             <GitHub />
           </IconButton>
           <Typography className={classes.title} align="right">
