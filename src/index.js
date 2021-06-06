@@ -8,27 +8,35 @@ import {
 } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { createStore, compose, applyMiddleware } from "redux";
+import { Provider } from "react-redux";
+import thunk from "redux-thunk";
 import MarsWeatherView from "./views/MarsWeatherView";
 import CosmicWeatherView from "./views/CosmicWeatherView";
 import EarthWeatherView from "./views/EarthWeatherView";
 import Navigation from "./modules/SharedModule/components/Navigation";
 import Footer from "./modules/SharedModule/components/Footer";
 import reportWebVitals from "./reportWebVitals";
+import rootReducer from "./rootReducer";
+
+const store = compose(applyMiddleware(thunk))(createStore)(rootReducer);
 
 ReactDOM.render(
   <React.StrictMode>
-    <Router>
-      <Navigation />
-      <Switch>
-        <Route exact path="/mars-weather" component={MarsWeatherView} />
-        <Route exact path="/cosmic-weather" component={CosmicWeatherView} />
-        <Route path="/earth-weather">
-          <EarthWeatherView />
-        </Route>
-        <Route path="/" render={() => <Redirect to="/earth-weather" />} />
-      </Switch>
-      <Footer />
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <Navigation />
+        <Switch>
+          <Route exact path="/mars-weather" component={MarsWeatherView} />
+          <Route exact path="/cosmic-weather" component={CosmicWeatherView} />
+          <Route path="/earth-weather">
+            <EarthWeatherView />
+          </Route>
+          <Route path="/" render={() => <Redirect to="/earth-weather" />} />
+        </Switch>
+        <Footer />
+      </Router>
+    </Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );

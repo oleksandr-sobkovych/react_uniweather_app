@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { Card, TextField, makeStyles, Button } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import { SET_CURRENT_CITY } from "../../actions/actionTypes";
+import { convertNeSwToNwSe } from "google-map-react";
 
 const useStyles = makeStyles({
   root: {
@@ -20,49 +22,59 @@ const useStyles = makeStyles({
   },
 });
 
-const CityForm = ({ acceptor: acceptorFunc }) => {
-  const [supportedCities, setSupportedCities] = useState([]);
-  const [cityName, setCityName] = useState("");
+const CityForm = () => {
+  const [supportedCities, setSupportedCities] = useState([""]);
+  // const [cityName, setCityName] = useState("");
   const classes = useStyles();
+  const history = useHistory();
+
   useEffect(() => {
     // API call
     setSupportedCities(["Lviv", "London"]);
   }, []);
+
   const dispatch = useDispatch();
 
-  const { control, handleSubmit, getValues, errors } = useForm();
+  const { control, handleSubmit, getValues, errors } = useForm({
+    defaultValues: { input_city: "" },
+  });
 
   const onSubmit = () => {
     if (!errors) {
-      const values = getValues();
-      acceptorFunc(cityName);
-      dispatch();
+      dispatch({ type: SET_CURRENT_CITY, payload: getValues().input_city });
+      history.push(`/earth-weather/${getValues().input_city}`);
     }
   };
 
   return (
     <Card>
-      <form className={classes.root} autoComplete="off">
+      <form
+        className={classes.root}
+        autoComplete="off"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <Controller
           control={control}
-          name={"input-city"}
+          name={"input_city"}
           rules={{
             required: "City name required",
-            validate: (value) => supportedCities.includes(value),
+            validate: (value) => {
+              return supportedCities.includes(value) || "City not found";
+            },
           }}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <Autocomplete
               className={classes.autocomplete}
               id="input-city"
-              onChange={onChange}
-              error={error}
               options={supportedCities}
+              onChange={onChange}
               onSelect={(e) => {
-                setCityName(e.target.value);
+                onChange(e);
               }}
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  error={!!error}
                   value={value}
                   helperText={error ? error.message : null}
                   label="Enter your city..."
