@@ -1,9 +1,13 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
+import AstroPicture from "../../modules/SpaceModule/components/AstroPicture";
 
 const CosmicWeatherView = () => (
   <Grid container>
-    {/* TODO: Add a module that handles earliest asteroid approach data. Add another, that displays an astronomy picture of the day with explanations. */}
+    {/*<Grid item xs={12}></Grid>*/}
+    <Grid item xs={12}>
+      <AstroPicture />
+    </Grid>
   </Grid>
 );
 

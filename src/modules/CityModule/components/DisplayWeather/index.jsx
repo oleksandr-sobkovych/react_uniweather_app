@@ -69,7 +69,7 @@ const DisplayWeather = ({
         </Typography>
       </div>
       <Typography className={classes.secondary_text}>
-        {(cels * 9) / 5 + 32} <WiFahrenheit />
+        {((cels * 9) / 5 + 32).toFixed(2)} <WiFahrenheit />
       </Typography>
       <Divider />
       <div className={classes.wrap}>

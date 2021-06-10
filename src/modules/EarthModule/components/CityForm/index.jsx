@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Card, TextField, makeStyles, Button } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import {
+  Card,
+  TextField,
+  makeStyles,
+  Button,
+  CircularProgress,
+} from "@material-ui/core";
+import Autocomplete, {
+  createFilterOptions,
+} from "@material-ui/lab/Autocomplete";
 import { useForm, Controller } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { SET_CURRENT_CITY } from "../../actions/actionTypes";
+import { fetchAllCities } from "../../actions/actions";
 import { convertNeSwToNwSe } from "google-map-react";
+import { useAsyncEffect } from "../../../SharedModule/hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -20,20 +30,43 @@ const useStyles = makeStyles({
   autocomplete: {
     minWidth: "30vh",
   },
+  progress: {
+    color: "white",
+  },
 });
 
 const CityForm = () => {
-  const [supportedCities, setSupportedCities] = useState([""]);
-  // const [cityName, setCityName] = useState("");
+  const supportedCities = useSelector((state) => state.cityObj.all_cities);
+  const [options, setOptions] = useState([]);
+  const [currentInput, setCurrentInput] = useState("");
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    // API call
-    setSupportedCities(["Lviv", "London"]);
+    dispatch(fetchAllCities());
   }, []);
 
-  const dispatch = useDispatch();
+  const loading = useAsyncEffect(
+    async () => {
+      return new Promise((resolve) =>
+        resolve(
+          typeof currentInput === "string" &&
+            supportedCities
+              .filter((city) =>
+                city.name.toLowerCase().includes(currentInput.toLowerCase())
+              )
+              .slice(0, 10)
+              .map((city) => city.name)
+        )
+      );
+    },
+    (newOptions) => {
+      newOptions && setOptions(newOptions);
+    },
+    [currentInput, supportedCities],
+    supportedCities.length > 0
+  );
 
   const { control, handleSubmit, getValues, errors } = useForm({
     defaultValues: { input_city: "" },
@@ -59,16 +92,20 @@ const CityForm = () => {
           rules={{
             required: "City name required",
             validate: (value) => {
-              return supportedCities.includes(value) || "City not found";
+              return options.includes(value) || "City not found";
             },
           }}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <Autocomplete
               className={classes.autocomplete}
               id="input-city"
-              options={supportedCities}
-              onChange={onChange}
+              options={options}
+              onChange={(e) => {
+                setCurrentInput(e.target.value);
+                return onChange(e);
+              }}
               onSelect={(e) => {
+                setCurrentInput(e.target.value);
                 onChange(e);
               }}
               renderInput={(params) => (
@@ -82,6 +119,17 @@ const CityForm = () => {
                   color="secondary"
                   InputLabelProps={{
                     style: { color: "lightgrey" },
+                  }}
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <>
+                        {loading ? (
+                          <CircularProgress className={classes.progress} />
+                        ) : null}
+                        {params.InputProps.endAdornment}
+                      </>
+                    ),
                   }}
                 />
               )}
