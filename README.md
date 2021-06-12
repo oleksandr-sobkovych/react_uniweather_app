@@ -2,9 +2,21 @@
 
 Oleksa Hryniv, Oleksandr Sobkovych, Volodymyr Fedynyak
 
-# Incorporated API (TODO)
+# Prerequisits
 
-NASA Insight, NASA SSD/CNEOS, Google Maps API, Open Weather Map, possibly Mars Climate Database
+Launch a local json-server like this:
+
+```bash
+json-server --watch src/server/db.json --port 8000
+```
+
+# Incorporated API
+
+NASA DONKI, NASA APOD, Google Maps, Open Weather Map.
+
+## Note
+
+NASA Insight-related functionality had to be removed, as this API is currently temporarily shut down.
 
 # Getting Started with Create React App
 

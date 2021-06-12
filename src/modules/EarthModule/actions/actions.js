@@ -17,7 +17,7 @@ export const fetchAllCities = () => (dispatch) => {
       console.log(err);
       dispatch({
         type: GET_ALL_CITIES_FAIL,
-        payload: [{ name: "None", lat: 37.42216, lon: -122.08427 }],
+        payload: [{ name: "", lat: 37.42216, lon: -122.08427 }],
       });
     });
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -14,6 +14,7 @@ const useStyles = makeStyles({
   root: {
     background: "linear-gradient(120deg, #bdb51c 10%, #1b0930 25%)",
     padding: "2% 2%",
+    margin: "1vh",
   },
   title: {
     fontSize: 32,
@@ -33,14 +34,13 @@ const useStyles = makeStyles({
 });
 
 const AstroPicture = () => {
-  // const [loading, setLoading] = useState(true);
-  const [title, setTitle] = useState("");
-  const [hdurl, setHdurl] = useState("");
-  const [copyright, setCopyright] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState(NaN);
+  const [hdurl, setHdurl] = useState(NaN);
+  const [copyright, setCopyright] = useState(NaN);
+  const [description, setDescription] = useState(NaN);
 
   const loading = useAsyncEffect(
-    async () => {
+    useCallback(async () => {
       return fetch(
         "https://api.nasa.gov/planetary/apod?api_key=4mzYWueZhEy7fVpGZQDcpa6YXPmolZJRagVbGjh1"
       )
@@ -58,16 +58,16 @@ const AstroPicture = () => {
           console.log(error);
           return [undefined, true];
         });
-    },
-    (data) => {
-      if (!data[-1]) {
+    }, []),
+    useCallback((data) => {
+      if (!data[1]) {
         const [title, hdurl, description, copyright] = data[0];
         setTitle(title);
         setDescription(description);
         setHdurl(hdurl);
         setCopyright(copyright);
       }
-    }
+    }, [])
   );
 
   const classes = useStyles();

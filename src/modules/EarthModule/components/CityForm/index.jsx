@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import {
   Card,
@@ -7,14 +7,11 @@ import {
   Button,
   CircularProgress,
 } from "@material-ui/core";
-import Autocomplete, {
-  createFilterOptions,
-} from "@material-ui/lab/Autocomplete";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { SET_CURRENT_CITY } from "../../actions/actionTypes";
 import { fetchAllCities } from "../../actions/actions";
-import { convertNeSwToNwSe } from "google-map-react";
 import { useAsyncEffect } from "../../../SharedModule/hooks";
 
 const useStyles = makeStyles({
@@ -45,10 +42,10 @@ const CityForm = () => {
 
   useEffect(() => {
     dispatch(fetchAllCities());
-  }, []);
+  }, [dispatch]);
 
   const loading = useAsyncEffect(
-    async () => {
+    useCallback(async () => {
       return new Promise((resolve) =>
         resolve(
           typeof currentInput === "string" &&
@@ -60,10 +57,10 @@ const CityForm = () => {
               .map((city) => city.name)
         )
       );
-    },
-    (newOptions) => {
+    }, [supportedCities, currentInput]),
+    useCallback((newOptions) => {
       newOptions && setOptions(newOptions);
-    },
+    }, []),
     [currentInput, supportedCities],
     supportedCities.length > 0
   );

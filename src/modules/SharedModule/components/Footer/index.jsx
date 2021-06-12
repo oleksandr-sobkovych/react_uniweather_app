@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   AppBar,
   makeStyles,
@@ -39,11 +38,15 @@ const Footer = () => {
         <Toolbar>
           <IconButton
             className={classes.button}
-            component={Link}
-            target="_blank"
-            to={{
-              pathname:
+            onClick={() => {
+              const newWindow = window.open(
                 "https://github.com/oleksandr-sobkovych/react_uniweather_app",
+                "_blank",
+                "noopener,noreferrer"
+              );
+              if (newWindow) {
+                newWindow.opener = null;
+              }
             }}
           >
             <GitHub />

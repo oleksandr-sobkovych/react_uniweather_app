@@ -4,7 +4,7 @@ export const useAsyncEffect = (
   effect = async () => {
     return undefined;
   },
-  afterEffect = (data) => {},
+  afterEffect = () => {},
   deps = [],
   loadingEndCondition = true
 ) => {
@@ -27,7 +27,7 @@ export const useAsyncEffect = (
     return () => {
       mounted = false;
     };
-  }, [...deps]);
+  }, [...deps, effect, afterEffect, loadingEndCondition]);
 
   return loading;
 };

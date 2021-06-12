@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useState, useCallback } from "react";
 import {
   Card,
   makeStyles,
@@ -12,6 +11,7 @@ import {
 } from "@material-ui/core";
 import DisplayWeather from "../DisplayWeather";
 import { useAsyncEffect } from "../../../SharedModule/hooks";
+import { CLOUDY_PERCENT, getWeatherObj } from "../../helper";
 
 const useStyles = makeStyles({
   root: {
@@ -34,11 +34,9 @@ const WeatherForecast = ({ city }) => {
   const classes = useStyles();
   const [currentDay, setCurrentDay] = useState(0);
   const [forecast, setForecast] = useState([]);
-  const cloudy = 50;
-  const kelvinD = 273.15;
 
   const loading = useAsyncEffect(
-    async () => {
+    useCallback(async () => {
       return fetch(
         `https://api.openweathermap.org/data/2.5/forecast?q=${city}&APPID=${"8c4cc13931b709dc9fa1256ad3d8c3ac"}`
       )
@@ -46,8 +44,8 @@ const WeatherForecast = ({ city }) => {
         .catch((err) => {
           console.log(err);
         });
-    },
-    (weatherArray) => {
+    }, [city]),
+    useCallback((weatherArray) => {
       if (weatherArray) {
         setForecast(
           weatherArray.list
@@ -55,20 +53,11 @@ const WeatherForecast = ({ city }) => {
             .map((elem, i) => ({
               index: i,
               date: elem.dt_txt.slice(0, 10),
-              weather: {
-                cels: (elem.main.temp - kelvinD).toFixed(2),
-                wind: elem.wind.speed,
-                humidity: elem.main.humidity,
-                clouds: elem.clouds.all,
-                day: true,
-                rain: elem.weather.some((el) => el.main === "Rain"),
-                hail: elem.weather.some((el) => el.main === "Hail"),
-                fog: elem.weather.some((el) => el.main === "Fog"),
-              },
+              weather: getWeatherObj(elem),
             }))
         );
       }
-    },
+    }, []),
     [city]
   );
 
@@ -102,17 +91,7 @@ const WeatherForecast = ({ city }) => {
               id={`tabpanel-${item.index}`}
             >
               {currentDay === item.index && (
-                <DisplayWeather
-                  rain={item.weather.rain}
-                  cels={item.weather.cels}
-                  clouds={item.weather.clouds}
-                  cloudy={cloudy}
-                  day={item.weather.day}
-                  fog={item.weather.fog}
-                  hail={item.weather.hail}
-                  humidity={item.weather.humidity}
-                  wind={item.weather.wind}
-                />
+                <DisplayWeather {...item.weather} cloudy={CLOUDY_PERCENT} />
               )}
             </div>
           ))}

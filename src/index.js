@@ -11,7 +11,6 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { createStore, compose, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
-import MarsWeatherView from "./views/MarsWeatherView";
 import CosmicWeatherView from "./views/CosmicWeatherView";
 import EarthWeatherView from "./views/EarthWeatherView";
 import Navigation from "./modules/SharedModule/components/Navigation";
@@ -27,7 +26,6 @@ ReactDOM.render(
       <Router>
         <Navigation />
         <Switch>
-          <Route exact path="/mars-weather" component={MarsWeatherView} />
           <Route exact path="/cosmic-weather" component={CosmicWeatherView} />
           <Route path="/earth-weather">
             <EarthWeatherView />

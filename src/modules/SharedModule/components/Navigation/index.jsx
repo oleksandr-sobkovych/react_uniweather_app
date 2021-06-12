@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import {
   AppBar,
   makeStyles,
@@ -28,35 +28,30 @@ const useStyles = makeStyles({
 
 const Navigation = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   return (
     <div className={classes.root}>
       <AppBar className={classes.appbar}>
         <Toolbar>
-          <IconButton className={classes.button} component={Link} to="/">
+          <IconButton
+            className={classes.button}
+            onClick={() => history.push("/")}
+          >
             <HomeOutlined />
           </IconButton>
           <Button
             className={classes.button}
-            component={Link}
-            to="/earth-weather"
+            onClick={() => history.push("/earth-weather")}
             color="secondary"
           >
             Earth
           </Button>
           <Button
             className={classes.button}
-            component={Link}
-            to="/cosmic-weather"
+            onClick={() => history.push("/cosmic-weather")}
           >
             Cosmic
-          </Button>
-          <Button
-            className={classes.button}
-            component={Link}
-            to="/mars-weather"
-          >
-            Mars
           </Button>
         </Toolbar>
       </AppBar>

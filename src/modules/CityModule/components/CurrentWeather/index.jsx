@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Card,
   makeStyles,
@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import DisplayWeather from "../DisplayWeather";
 import { useAsyncEffect } from "../../../SharedModule/hooks";
+import { CLOUDY_PERCENT, getWeatherObj } from "../../helper";
 
 const useStyles = makeStyles({
   root: {
@@ -25,19 +26,19 @@ const useStyles = makeStyles({
 
 const CurrentWeather = ({ city }) => {
   const classes = useStyles();
-  const [cels, setCels] = useState(NaN);
-  const [wind, setWind] = useState(NaN);
-  const [humidity, setHumidity] = useState(NaN);
-  const [clouds, setClouds] = useState(NaN);
-  const [day, setDay] = useState(true);
-  const [rain, setRain] = useState(false);
-  const [hail, setHail] = useState(false);
-  const [fog, setFog] = useState(false);
-  const cloudy = 50;
-  const kelvinD = 273.15;
+  const [weather, setWeather] = useState({
+    cels: NaN,
+    rain: false,
+    fog: false,
+    hail: false,
+    clouds: NaN,
+    day: true,
+    humidity: NaN,
+    wind: NaN,
+  });
 
   const loading = useAsyncEffect(
-    async () => {
+    useCallback(async () => {
       return fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${"8c4cc13931b709dc9fa1256ad3d8c3ac"}`
       )
@@ -45,22 +46,12 @@ const CurrentWeather = ({ city }) => {
         .catch((err) => {
           console.log(err);
         });
-    },
-    (weatherObj) => {
+    }, [city]),
+    useCallback((weatherObj) => {
       if (weatherObj) {
-        setClouds(weatherObj.clouds.all);
-        setCels((weatherObj.main.temp - kelvinD).toFixed(2));
-        setDay(
-          weatherObj.dt >= weatherObj.sys.sunrise &&
-            weatherObj.dt < weatherObj.sys.sunset
-        );
-        setHumidity(weatherObj.main.humidity);
-        setWind(weatherObj.wind.speed);
-        setFog(weatherObj.weather.some((el) => el.main === "Fog"));
-        setRain(weatherObj.weather.some((el) => el.main === "Rain"));
-        setHail(weatherObj.weather.some((el) => el.main === "Hail"));
+        setWeather(getWeatherObj(weatherObj));
       }
-    },
+    }, []),
     [city]
   );
 
@@ -73,17 +64,7 @@ const CurrentWeather = ({ city }) => {
       {loading ? (
         <CircularProgress className={classes.progress} />
       ) : (
-        <DisplayWeather
-          rain={rain}
-          cels={cels}
-          clouds={clouds}
-          cloudy={cloudy}
-          day={day}
-          fog={fog}
-          hail={hail}
-          humidity={humidity}
-          wind={wind}
-        />
+        <DisplayWeather {...weather} cloudy={CLOUDY_PERCENT} />
       )}
     </Card>
   );
